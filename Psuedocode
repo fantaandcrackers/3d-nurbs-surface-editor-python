@@ -1,0 +1,59 @@
+Psuedocode
+
+
+
+
+
+
+
+
+//// PointFormat:
+ 	pointMatrix[row][column]
+
+//// deBoor Algorithm:
+	
+
+	def deBoor_generatePoint(k, degree, u, interval, points, knots):
+	if k == 0:
+		return points[interval]
+	else:
+		t0 = float(u - knots[interval])/ (knots[interval+degree+1-k] - knots[interval])
+		t1 = 1.0 - t0
+		x0, y0 = deBoor_generatePoint(k-1, degree, u, interval - 1, points, knots)
+		x1, y1 = deBoor_generatePoint(k-1, degree, u, interval, points, knots)
+		return [x0*t1 + x1*t0, y0*t1 + y1*t0]
+
+
+//// NURBS Surface
+nurb(points, t)
+	1. Elevate using weights
+	2. Run 4D deBoors algorithm on points
+	3. Project resulting point back to 3D
+
+// X: u, i, n, uKnots
+// Y: v, j, m, vKnots
+surface(u, v):
+	for i in 0 -> n:
+		iPoints.append( nurb( points[i][0...m], v, vKnots) )
+	return nurb(iPoints, u, uKnots)
+
+generateSurfacePoints(uKnots, vKnots):
+	for j in 0...divisionNumber:
+		for j in 0...divisionNumber:
+			u = i/divisionNumber
+			v = j/divisionNumber
+			resultPoints[i][j] = surface(u, v)
+	return resultPoints
+
+//// Generate Knots
+// - Allow for Centripetal, Euclidean Distance, and Equidistant Knots.
+knots(n, k, type)
+For n points & k order:
+	Create n deltas (According to schema)
+	Add k deltas to beginning of deltas (Copy first deltas)
+	Add k deltas to end of deltas (Copy last deltas)
+	Return all intervals between deltas
+
+
+
+
